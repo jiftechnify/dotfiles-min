@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+# special thunks to: https://qiita.com/yutkat/items/c6c7584d9795799ee164
+
 set -ue
 
 echo "backuping old dotfiles..."
