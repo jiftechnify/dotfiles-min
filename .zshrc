@@ -45,7 +45,7 @@ alias ll='ls -l'
 function __list_tasks() {
     local -a scripts
 
-    if ls Taskfile.y*ml > /dev/null 2>&1; then
+    if ls Taskfile.yaml > /dev/null 2>&1; then
         tasks=$(task -l | sed -En "s/^\* ([^[:space:]]+):[[:space:]]+(.+)$/\1 \2/p" | awk '{gsub(/:/,"\\:",$1)} 1' | awk "{ st = index(\$0,\" \"); print \$1 \":\" substr(\$0,st+1)}")
         scripts=("${(@f)$(echo $tasks)}")
         _describe 'script' scripts
@@ -70,3 +70,5 @@ _task() {
         '(- *)'{-h,--help}'[show help]' \
         '*: :__list_tasks'
 }
+
+compdef _task task
