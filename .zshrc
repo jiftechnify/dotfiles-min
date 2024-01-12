@@ -1,30 +1,18 @@
-# configure plugins
-source ~/.zplug/init.zsh
+ZIM_HOME=~/.zim
 
-zplug "zsh-users/zsh-completions"
-zplug "zsh-users/zsh-autosuggestions"
-zplug "zsh-users/zsh-syntax-highlighting", defer:2
-zplug "zsh-users/zsh-history-substring-search"
-zplug "mafredri/zsh-async", from:github
-zplug "sindresorhus/pure", use:"pure.zsh", from:github, as:theme
-
-# Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-    printf "Install? [y/N]: "
-    if read -q; then
-        echo; zplug install
-    fi
+# Download zimfw plugin manager if missing.
+if [[ ! -e ${ZIM_HOME}/zimfw.zsh ]]; then
+  curl -fsSL --create-dirs -o ${ZIM_HOME}/zimfw.zsh \
+      https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh
 fi
 
-# Then, source plugins and add commands to $PATH
-zplug load
+# Install missing modules, and update ${ZIM_HOME}/init.zsh if missing or outdated.
+if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZDOTDIR:-${HOME}}/.zimrc ]]; then
+  source ${ZIM_HOME}/zimfw.zsh init -q
+fi
 
-# enable completions
-autoload -Uz compinit; compinit -u
-
-# enable custom prompt
-autoload -U promptinit; promptinit
-prompt pure > /dev/null
+# Initialize modules.
+source ${ZIM_HOME}/init.zsh
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -37,7 +25,11 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 alias la='ls -a'
-alias ll='ls -l'
+alias ll='ls -lah'
+
+# Ctrl+Left/Right to move between words
+bindkey "^[[1;5C" emacs-forward-word
+bindkey "^[[1;5D" emacs-backward-word
 
 # completions for go-task
 # original: https://github.com/sawadashota/go-task-completions
